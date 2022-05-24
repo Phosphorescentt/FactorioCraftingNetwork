@@ -1,4 +1,4 @@
-import requests
+import json
 import networkx as nx
 import networkx.algorithms.community as nx_comm
 
@@ -30,7 +30,7 @@ class Item:
 def create_network_from_items(items):
     # There is a way to do this recursively so that you don't have to iterate
     # over everything twice but I'm too tired/lazy/dumb to figure that out :)
-    G = nx.DiGraph()
+    G = nx.Graph()
     G.add_nodes_from(items)
 
     for item in items:
@@ -54,7 +54,7 @@ def create_network_from_items(items):
 
     return G
 
-def render_digraph(G, filename):
+def render_graph(G, filename):
     plt.figure(figsize=(50, 50))
 
     pos = nx.spring_layout(G)
@@ -67,14 +67,14 @@ def render_digraph(G, filename):
     plt.savefig(filename)
 
 
-def render_digraph_communities(G, communities, filename):
+def render_graph_communities(G, communities, filename):
     colours = ["red", "blue", "yellow", "green", "aquamarine", "orange", "pink", "plum", "purple", "black", "white"]
     plt.figure(figsize=(50, 50))
 
     pos = nx.spring_layout(G)
 
     for i, comm in enumerate(communities):
-        nx.draw_networkx_nodes(G, pos, nodelist=comm, node_color=colours[i])
+        nx.draw_networkx_nodes(G, pos, nodelist=comm, node_color=colours[i % len(colours)])
 
     nx.draw_networkx_edges(G, pos)
 
@@ -84,8 +84,10 @@ def render_digraph_communities(G, communities, filename):
     plt.savefig(filename)
 
 if __name__ == "__main__":
-    r = requests.get("https://kevinta893.github.io/factorio-recipes-json/recipes.min.json")
-    items = [Item(i) for i in r.json()]
+    # r = requests.get("https://kevinta893.github.io/factorio-recipes-json/recipes.min.json")
+    with open("data.json") as f:
+        j = json.load(f)
+    items = [Item(i) for i in j]
     G = create_network_from_items(items)
 
     # print("Rendering graph")
@@ -93,6 +95,8 @@ if __name__ == "__main__":
 
     print("Rendering communities")
     communities = nx_comm.louvain_communities(G)
-    print(len(communities))
-    # render_digraph_communities(G, communities, "comm_graph.png")
+    # render_graph_communities(G, communities, "comm_graph.png")
+
+    for community in communities:
+        print(community)
 
