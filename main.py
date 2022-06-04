@@ -54,10 +54,9 @@ def create_network_from_items(items):
 
     return G
 
-def render_graph(G, filename):
+def render_graph(G, pos, filename):
     plt.figure(figsize=(50, 50))
 
-    pos = nx.spring_layout(G)
     nx.draw_networkx_nodes(G, pos=pos)
     nx.draw_networkx_edges(G, pos)
 
@@ -67,11 +66,9 @@ def render_graph(G, filename):
     plt.savefig(filename)
 
 
-def render_graph_communities(G, communities, filename):
+def render_graph_communities(G, pos, communities, filename):
     colours = ["red", "blue", "yellow", "green", "aquamarine", "orange", "pink", "plum", "purple", "black", "white"]
     plt.figure(figsize=(50, 50))
-
-    pos = nx.spring_layout(G)
 
     for i, comm in enumerate(communities):
         nx.draw_networkx_nodes(G, pos, nodelist=comm, node_color=colours[i % len(colours)])
@@ -90,13 +87,14 @@ if __name__ == "__main__":
     items = [Item(i) for i in j]
     G = create_network_from_items(items)
 
-    # print("Rendering graph")
-    # render_digraph(G, "graph.png")
+    pos = nx.spring_layout(G, 30)
+    print("Rendering graph")
+    render_graph(G, pos, "graph.png")
 
     print("Rendering communities")
     communities = nx_comm.louvain_communities(G)
-    # render_graph_communities(G, communities, "comm_graph.png")
+    render_graph_communities(G, pos, communities, "comm_graph.png")
 
-    for community in communities:
-        print(community)
+    # for community in communities:
+    #     print(community)
 
