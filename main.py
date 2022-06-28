@@ -1,41 +1,26 @@
 import json
 import networkx as nx
-import networkx.algorithms.community as nx_comm
-import matplotlib.pyplot as plt
+# import networkx.algorithms.community as nx_comm
 
 import helpers
-
-from random import shuffle
-
-
-class Recipe:
-    def __init__(self, j):
-        self.time = j["time"]
-        self.item_yield = j["yield"]
-        self.ingredients = j["ingredients"]
-        pass
-
-class Item:
-    def __init__(self, j):
-        self.category = j["category"]
-        self.id = j["id"]
-        self.recipe = Recipe(j["recipe"])
-        self.type = j["type"]
-        self.wiki_link = j["wiki_link"]
-
-    def __repr__(self):
-        # return f"<Item object with id {self.id}>"
-        return self.id
+from helpers import Item
 
 
 if __name__ == "__main__":
     # r = requests.get("https://kevinta893.github.io/factorio-recipes-json/recipes.min.json")
-    with open("data.json") as f:
+    with open("data/data.json") as f:
         j = json.load(f)
-    items = [Item(i) for i in j]
+
+    # items = [Item(j[i]) for i in j]
+
+    items = []
+    for i in j:
+        print(i)
+        items.append(Item(j[i]))
+
     G = helpers.create_network_from_items(items)
 
-    pos = nx.spring_layout(G, 30)
+    # pos = nx.spring_layout(G, 30)
     # communities = nx_comm.asyn_fluidc(G, 5)
 
 
